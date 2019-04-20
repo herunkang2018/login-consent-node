@@ -52,6 +52,9 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   // Let's check if the user provided valid credentials. Of course, you'd use a database or some third-party service
   // for this!
+
+  // @@add database
+  
   if (!(req.body.email === 'foo@bar.com' && req.body.password === 'foobar')) {
     // Looks like the user provided invalid credentials, let's show the ui again...
 

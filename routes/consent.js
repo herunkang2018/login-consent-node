@@ -15,7 +15,7 @@ router.get('/', csrfProtection, function (req, res, next) {
   var challenge = query.consent_challenge;
 
   hydra.getConsentRequest(challenge)
-  // This will be called if the HTTP request was successful
+    // This will be called if the HTTP request was successful
     .then(function (response) {
       // If a user has granted this application the requested scope, hydra will tell us to not show the UI.
       if (response.skip) {
@@ -38,8 +38,10 @@ router.get('/', csrfProtection, function (req, res, next) {
             // access_token: { foo: 'bar' },
 
             // This data will be available in the ID token.
-		  // @@Runking: add chName
-		  id_token: { email: "runking@12306.com" },
+            // @@Runking: add chName
+            // id_token: { email: "runking@12306.com" },
+            id_token: { email: "runking" },
+            
           }
         }).then(function (response) {
           // All we need to do now is to redirect the user back to hydra!
@@ -92,7 +94,7 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   // Seems like the user authenticated! Let's tell hydra...
   hydra.getConsentRequest(challenge)
-  // This will be called if the HTTP request was successful
+    // This will be called if the HTTP request was successful
     .then(function (response) {
       return hydra.acceptConsentRequest(challenge, {
         // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
@@ -106,7 +108,9 @@ router.post('/', csrfProtection, function (req, res, next) {
           // access_token: { foo: 'bar' },
 
           // This data will be available in the ID token.
-		id_token: { email: "runking@12306.com",username:"test_it" },
+          // id_token: { email: "runking@12306.com", username: "test_it" },
+          id_token: { email: "runking", username: "test_it" },
+          
         },
 
         // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.

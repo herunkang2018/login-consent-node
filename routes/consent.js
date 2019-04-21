@@ -58,7 +58,7 @@ router.get('/', csrfProtection, function (req, res, next) {
             // remember:?
             // test
             // 验证token?
-            id_token: { email: "runking" },
+            id_token: { email: "runking", username: "admin"},
 
           }
         }).then(function (response) {

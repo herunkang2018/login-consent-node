@@ -11,39 +11,17 @@ var connection = mysql.createConnection({
   database: 'open_paas'
 });
 
-connection.connect();
 
-var sql = 'SELECT username FROM bkaccount_bkuser';
-
-// username + password
-// select *  from bkaccount_bkuser where username='admin'
-var sql = "select password  from bkaccount_bkuser where username='admin'"
-// var sql = "select password  from bkaccount_bkuser where username='sss'"
-
-//查
-connection.query(sql, function (err, result) {
-  if (err) {
-    console.log('[SELECT ERROR] - ', err.message);
-    return;
-  }
-
-  console.log('--------------------------SELECT----------------------------');
-  console.log(result.length);
-  if (result.length == 0) {
-    console.log("no entry")
-  } else {
-    console.log("user already have")
-  }
-  console.log('------------------------------------------------------------\n\n');
-});
-
-
+//Main logic
 
 // Sets up csrf protection
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 
 router.get('/', csrfProtection, function (req, res, next) {
+  // test
+  connection.connect();
+
   // Parses the URL query
   var query = url.parse(req.url, true).query;
 
@@ -147,7 +125,7 @@ router.post('/', csrfProtection, function (req, res, next) {
     // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
     // @@using username
     // subject: 'foo@bar.com',
-    subject: email,    
+    subject: email,
 
     // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
     // set the "skip" parameter in the other route to true on subsequent requests!

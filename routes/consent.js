@@ -55,9 +55,8 @@ router.get('/', csrfProtection, function (req, res, next) {
             // This data will be available in the ID token.
             // @@Runking: add chName using open_paas db
             // id_token: { email: "runking@12306.com" },
-            // remember:?
             // test
-            // 验证token?
+            // debug
             id_token: { email: "runking", username: "admin"},
 
           }
@@ -177,8 +176,8 @@ router.post('/', csrfProtection, function (req, res, next) {
 
             // id_token: { email: "runking", username: "test_it" },
             // debug
-            // id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
-            id_token: { email: "runking", username: "admin"},
+            id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
+            // id_token: { email: "runking", username: "admin"},
             
 
           },

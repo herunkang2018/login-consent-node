@@ -67,7 +67,7 @@ router.post('/', csrfProtection, function (req, res, next) {
     password: 'password',
     database: 'open_paas'
   });
-  
+
   connection.connect();
 
   // @@add database
@@ -80,6 +80,7 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   //查
   connection.query(sql, function (err, result) {
+    connection.end();
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       return;
@@ -165,6 +166,6 @@ router.post('/', csrfProtection, function (req, res, next) {
   //   });
 });
 
-connection.end();
+
 
 module.exports = router;

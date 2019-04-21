@@ -10,6 +10,17 @@ var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 
 router.get('/', csrfProtection, function (req, res, next) {
+
+  //@@ test db
+  var connection = mysql.createConnection({
+    host: 'localserver',
+    user: 'root',
+    password: 'password',
+    database: 'open_paas'
+  });
+
+  connection.connect();
+
   // Parses the URL query
   var query = url.parse(req.url, true).query;
 
@@ -44,14 +55,6 @@ router.get('/', csrfProtection, function (req, res, next) {
             // id_token: { email: "runking@12306.com" },
             // remember:?
             // test
-            var connection = mysql.createConnection({
-              host: 'localserver',
-              user: 'root',
-              password: 'password',
-              database: 'open_paas'
-            });
-
-            connection.connect();
             id_token: { email: "runking" },
 
           }
@@ -108,6 +111,54 @@ router.post('/', csrfProtection, function (req, res, next) {
   hydra.getConsentRequest(challenge)
     // This will be called if the HTTP request was successful
     .then(function (response) {
+      // @@add some logic
+      // using mysql db
+      //@@ test db
+      var connection = mysql.createConnection({
+        host: 'localserver',
+        user: 'root',
+        password: 'password',
+        database: 'open_paas'
+      });
+
+      connection.connect();
+
+      var sub = response.subject;
+      console.log("find subject: ", sub);
+
+      //@@ query and fill the id_token
+      // first five fields: username+password+chname+phone+email 
+      var sql = "select username,chname,phone,email from bkaccount_bkuser where username='" + sub + "'"
+      connection.query(sql, function (err, result) {
+        connection.end();
+        if (err) {
+          console.log('[SELECT ERROR] - ', err.message);
+          // using flag to temp fixed
+          flag = 1;
+        }
+
+        console.log('--------------------------SELECT----------------------------');
+        console.log(result.length);
+        if (result.length == 0) {
+          // auth failed
+          console.log("no entry");
+          res.render('login', {
+            csrfToken: req.csrfToken(),
+
+            challenge: challenge,
+
+            error: 'The username / password combination is not correct'
+          });
+
+          flag = 1;
+
+        } else {
+          console.log("user already have");
+          // continue
+        }
+        console.log('------------------------------------------------------------\n\n');
+      });
+
       return hydra.acceptConsentRequest(challenge, {
         // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
         // are requested accidentally.
@@ -121,7 +172,9 @@ router.post('/', csrfProtection, function (req, res, next) {
 
           // This data will be available in the ID token.
           // id_token: { email: "runking@12306.com", username: "test_it" },
-          id_token: { email: "runking", username: "test_it" },
+
+          // id_token: { email: "runking", username: "test_it" },
+          id_token: { email: response.subject, username: "test_it" },
 
         },
 

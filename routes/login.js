@@ -112,6 +112,7 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   // not go continue the rest request
   if(flag == 1){
+    console.log("flag=1")
     return;
   }
 

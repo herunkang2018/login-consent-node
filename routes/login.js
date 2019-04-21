@@ -85,10 +85,9 @@ router.post('/', csrfProtection, function (req, res, next) {
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       // using flag to temp fixed
-      flag = 1;
+      return;
     }
 
-    console.log('--------------------------SELECT----------------------------');
     console.log(result.length);
     if (result.length == 0) {
       // auth failed
@@ -101,23 +100,42 @@ router.post('/', csrfProtection, function (req, res, next) {
         error: 'The username / password combination is not correct'
       });
 
-      flag = 1;
+      return;
 
     } else {
-      console.log("user already have");
+      console.log("user already exist");
       // continue
-    }
-    console.log('------------------------------------------------------------\n\n');
-  });
 
-  // not go continue the rest request
-  if(flag == 1){
-    console.log("flag=1")
-    return;
-  }
+      // Seems like the user authenticated! Let's tell hydra...
+      hydra.acceptLoginRequest(challenge, {
+        // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
+        // @@using username
+        // subject: 'foo@bar.com',
+        subject: email,
 
-  console.log("debug...")
-  // auth the user using open_paas db
+        // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
+        // set the "skip" parameter in the other route to true on subsequent requests!
+        remember: Boolean(req.body.remember),
+
+        // When the session expires, in seconds. Set this to 0 so it will never expire.
+        remember_for: 3600,
+
+        // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
+        // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
+        // acr: '0',
+      })
+        .then(function (response) {
+          // All we need to do now is to redirect the user back to hydra!
+          res.redirect(response.redirect_to);
+        })
+        // This will handle any error that happens when making HTTP calls to hydra
+        .catch(function (error) {
+          next(error);
+        });
+
+    } //else
+  }); // end of query
+
 
   /*
   if (!(req.body.email === 'foo@bar.com' && req.body.password === 'foobar')) {
@@ -134,32 +152,6 @@ router.post('/', csrfProtection, function (req, res, next) {
   }
   */
 
-  // Seems like the user authenticated! Let's tell hydra...
-  hydra.acceptLoginRequest(challenge, {
-    // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
-    // @@using username
-    // subject: 'foo@bar.com',
-    subject: email,
-
-    // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
-    // set the "skip" parameter in the other route to true on subsequent requests!
-    remember: Boolean(req.body.remember),
-
-    // When the session expires, in seconds. Set this to 0 so it will never expire.
-    remember_for: 3600,
-
-    // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
-    // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
-    // acr: '0',
-  })
-    .then(function (response) {
-      // All we need to do now is to redirect the user back to hydra!
-      res.redirect(response.redirect_to);
-    })
-    // This will handle any error that happens when making HTTP calls to hydra
-    .catch(function (error) {
-      next(error);
-    });
 
   // You could also deny the login request which tells hydra that no one authenticated!
   // hydra.rejectLoginRequest(challenge, {

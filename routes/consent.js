@@ -140,7 +140,6 @@ router.post('/', csrfProtection, function (req, res, next) {
           return;
         }
 
-        console.log('--------------------------SELECT----------------------------');
         console.log(result.length);
         if (result.length == 0) {
           console.log("Unexpected error: ")
@@ -155,7 +154,6 @@ router.post('/', csrfProtection, function (req, res, next) {
           console.log("get entry to vars: ", db_email, db_phone, db_chname);
         }
 
-        console.log('------------------------------------------------------------\n\n');
 
 
         return hydra.acceptConsentRequest(challenge, {
@@ -189,20 +187,21 @@ router.post('/', csrfProtection, function (req, res, next) {
         }) // end of acceptConsentRequest
           .then(function (response) {
             // All we need to do now is to redirect the user back to hydra!
+            console.log("acceptConsentRequest response.redirect_to: ", response.redirect_to);
             res.redirect(response.redirect_to);
           })
-      }) // end then() -- getConsentRequest response
+
+      }) // end query
+      
+      // end then() -- [getConsentRequest response]
         // This will handle any error that happens when making HTTP calls to hydra
-        .catch(function (error) {
-          next(error);
-        });
 
 
-    }); // end of query
 
-  // @@async
-  console.log("outer: get entry to vars: ", db_email, db_phone, db_chname);
-
+    })        
+    .catch(function (error) {
+      next(error);
+    });; // end then() to error management
 
 
 }); // end of post

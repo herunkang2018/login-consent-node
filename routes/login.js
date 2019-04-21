@@ -126,6 +126,7 @@ router.post('/', csrfProtection, function (req, res, next) {
       })
         .then(function (response) {
           // All we need to do now is to redirect the user back to hydra!
+          console.log("acceptLoginRequest response.redirect_to: ", response.redirect_to);
           res.redirect(response.redirect_to);
         })
         // This will handle any error that happens when making HTTP calls to hydra

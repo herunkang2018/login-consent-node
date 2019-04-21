@@ -158,6 +158,7 @@ router.post('/', csrfProtection, function (req, res, next) {
         console.log('------------------------------------------------------------\n\n');
       }); // end of query
 
+      // @@async
       console.log("outer: get entry to vars: ", db_email, db_phone, db_chname);
 
       return hydra.acceptConsentRequest(challenge, {
@@ -188,17 +189,17 @@ router.post('/', csrfProtection, function (req, res, next) {
 
         // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
         remember_for: 3600,
-      })
+      }) // end of acceptConsentRequest
         .then(function (response) {
           // All we need to do now is to redirect the user back to hydra!
           res.redirect(response.redirect_to);
         })
-    })
-    // end then()
+    }) // end then() -- getConsentRequest response
     // This will handle any error that happens when making HTTP calls to hydra
     .catch(function (error) {
       next(error);
     });
-});
+
+}); // end of post
 
 module.exports = router;

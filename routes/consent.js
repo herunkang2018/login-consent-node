@@ -38,7 +38,7 @@ router.get('/', csrfProtection, function (req, res, next) {
             // access_token: { foo: 'bar' },
 
             // This data will be available in the ID token.
-            // @@Runking: add chName
+            // @@Runking: add chName using open_paas db
             // id_token: { email: "runking@12306.com" },
             id_token: { email: "runking" },
             

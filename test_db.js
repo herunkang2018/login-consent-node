@@ -7,11 +7,6 @@ var connection = mysql.createConnection({
 });
  
 connection.connect();
- 
-connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-  if (error) throw error;
-  console.log('The solution is: ', results[0].solution);
-});
 
 var  sql = 'SELECT username FROM bkaccount_bkuser';
 
@@ -29,6 +24,11 @@ connection.query(sql,function (err, result) {
  
        console.log('--------------------------SELECT----------------------------');
        console.log(result.length);
+       if(result.length == 0) {
+          console.log("no entry")
+       } else {
+         console.log("user already have")
+       }
        console.log('------------------------------------------------------------\n\n');  
 });
  

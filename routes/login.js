@@ -3,6 +3,42 @@ var router = express.Router();
 var url = require('url');
 var hydra = require('../services/hydra')
 
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+  host: 'localserver',
+  user: 'root',
+  password: 'password',
+  database: 'open_paas'
+});
+
+connection.connect();
+
+var sql = 'SELECT username FROM bkaccount_bkuser';
+
+// username + password
+// select *  from bkaccount_bkuser where username='admin'
+var sql = "select password  from bkaccount_bkuser where username='admin'"
+// var sql = "select password  from bkaccount_bkuser where username='sss'"
+
+//查
+connection.query(sql, function (err, result) {
+  if (err) {
+    console.log('[SELECT ERROR] - ', err.message);
+    return;
+  }
+
+  console.log('--------------------------SELECT----------------------------');
+  console.log(result.length);
+  if (result.length == 0) {
+    console.log("no entry")
+  } else {
+    console.log("user already have")
+  }
+  console.log('------------------------------------------------------------\n\n');
+});
+
+
+
 // Sets up csrf protection
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
@@ -15,7 +51,7 @@ router.get('/', csrfProtection, function (req, res, next) {
   var challenge = query.login_challenge;
 
   hydra.getLoginRequest(challenge)
-  // This will be called if the HTTP request was successful
+    // This will be called if the HTTP request was successful
     .then(function (response) {
       // If hydra was already able to authenticate the user, skip will be true and we do not need to re-authenticate
       // the user.
@@ -54,7 +90,44 @@ router.post('/', csrfProtection, function (req, res, next) {
   // for this!
 
   // @@add database
-  
+  var email = req.body.email;
+  var password = req.body.password;
+  // var sql = "select password from bkaccount_bkuser where username='admin'"
+  // var sql = "select password  from bkaccount_bkuser where username='sss'"
+  var sql = "select password from bkaccount_bkuser where username='" + email + "'"
+  console.log("++sql: ", sql)
+
+  //查
+  connection.query(sql, function (err, result) {
+    if (err) {
+      console.log('[SELECT ERROR] - ', err.message);
+      return;
+    }
+
+    console.log('--------------------------SELECT----------------------------');
+    console.log(result.length);
+    if (result.length == 0) {
+      // auth failed
+      console.log("no entry");
+      res.render('login', {
+        csrfToken: req.csrfToken(),
+
+        challenge: challenge,
+
+        error: 'The username / password combination is not correct'
+      });
+      return;
+    } else {
+      console.log("user already have");
+      // continue
+    }
+    console.log('------------------------------------------------------------\n\n');
+  });
+
+
+  // auth the user using open_paas db
+
+  /*
   if (!(req.body.email === 'foo@bar.com' && req.body.password === 'foobar')) {
     // Looks like the user provided invalid credentials, let's show the ui again...
 
@@ -67,11 +140,14 @@ router.post('/', csrfProtection, function (req, res, next) {
     });
     return;
   }
+  */
 
   // Seems like the user authenticated! Let's tell hydra...
   hydra.acceptLoginRequest(challenge, {
     // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
-    subject: 'foo@bar.com',
+    // @@using username
+    // subject: 'foo@bar.com',
+    subject: email,    
 
     // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
     // set the "skip" parameter in the other route to true on subsequent requests!
@@ -107,5 +183,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   //     next(error);
   //   });
 });
+
+connection.end();
 
 module.exports = router;

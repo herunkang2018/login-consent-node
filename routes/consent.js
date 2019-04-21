@@ -127,35 +127,34 @@ router.post('/', csrfProtection, function (req, res, next) {
       console.log("find subject: ", sub);
 
       //@@ query and fill the id_token
-      // first five fields: username+password+chname+phone+email 
-      var sql = "select username,chname,phone,email from bkaccount_bkuser where username='" + sub + "'"
+      // first five fields: username+password+chname+phone+email
+      var db_chname = '';
+      var db_email = '';
+      var db_phone = '';
+
+      var sql = "select chname,phone,email from bkaccount_bkuser where username='" + sub + "'"
       connection.query(sql, function (err, result) {
         connection.end();
         if (err) {
-          console.log('[SELECT ERROR] - ', err.message);
-          // using flag to temp fixed
-          flag = 1;
+          console.log('Unexpected error: [SELECT ERROR] - ', err.message);
+          return;
         }
 
         console.log('--------------------------SELECT----------------------------');
         console.log(result.length);
         if (result.length == 0) {
-          // auth failed
-          console.log("no entry");
-          res.render('login', {
-            csrfToken: req.csrfToken(),
-
-            challenge: challenge,
-
-            error: 'The username / password combination is not correct'
-          });
-
-          flag = 1;
-
+          console.log("Unexpected error: ")
         } else {
-          console.log("user already have");
-          // continue
+          console.log("[Must] user already have");
+
+          // get the entry
+          db_email = result[0].email;
+          db_phone = result[0].phone;
+          db_chname = result[0].chname;
+
+          console.log("get entry to vars: ", db_email, db_phone, db_chname);
         }
+
         console.log('------------------------------------------------------------\n\n');
       });
 
@@ -174,7 +173,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           // id_token: { email: "runking@12306.com", username: "test_it" },
 
           // id_token: { email: "runking", username: "test_it" },
-          id_token: { email: response.subject, username: "test_it" },
+          id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
 
         },
 
@@ -193,6 +192,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           res.redirect(response.redirect_to);
         })
     })
+    // end then()
     // This will handle any error that happens when making HTTP calls to hydra
     .catch(function (error) {
       next(error);

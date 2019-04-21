@@ -25,9 +25,10 @@ connection.query(sql,function (err, result) {
        console.log('--------------------------SELECT----------------------------');
        console.log(result.length);
        if(result.length == 0) {
-          console.log("no entry")
+          console.log("no entry");
        } else {
-         console.log("user already have")
+         console.log("user already have");
+         console.log(result[0].user)
        }
        console.log('------------------------------------------------------------\n\n');  
 });

@@ -4,12 +4,7 @@ var url = require('url');
 var hydra = require('../services/hydra')
 
 var mysql = require('mysql');
-var connection = mysql.createConnection({
-  host: 'localserver',
-  user: 'root',
-  password: 'password',
-  database: 'open_paas'
-});
+
 
 
 //Main logic
@@ -66,6 +61,13 @@ router.post('/', csrfProtection, function (req, res, next) {
   // for this!
 
   // test
+  var connection = mysql.createConnection({
+    host: 'localserver',
+    user: 'root',
+    password: 'password',
+    database: 'open_paas'
+  });
+  
   connection.connect();
 
   // @@add database

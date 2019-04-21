@@ -156,49 +156,54 @@ router.post('/', csrfProtection, function (req, res, next) {
         }
 
         console.log('------------------------------------------------------------\n\n');
-      }); // end of query
 
-      // @@async
-      console.log("outer: get entry to vars: ", db_email, db_phone, db_chname);
 
-      return hydra.acceptConsentRequest(challenge, {
-        // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
-        // are requested accidentally.
-        grant_scope: grant_scope,
+        return hydra.acceptConsentRequest(challenge, {
+          // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
+          // are requested accidentally.
+          grant_scope: grant_scope,
 
-        // The session allows us to set session data for id and access tokens
-        session: {
-          // This data will be available when introspecting the token. Try to avoid sensitive information here,
-          // unless you limit who can introspect tokens.
-          // access_token: { foo: 'bar' },
+          // The session allows us to set session data for id and access tokens
+          session: {
+            // This data will be available when introspecting the token. Try to avoid sensitive information here,
+            // unless you limit who can introspect tokens.
+            // access_token: { foo: 'bar' },
 
-          // This data will be available in the ID token.
-          // id_token: { email: "runking@12306.com", username: "test_it" },
+            // This data will be available in the ID token.
+            // id_token: { email: "runking@12306.com", username: "test_it" },
 
-          // id_token: { email: "runking", username: "test_it" },
-          id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
+            // id_token: { email: "runking", username: "test_it" },
+            id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
 
-        },
+          },
 
-        // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.
-        grant_access_token_audience: response.requested_access_token_audience,
+          // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.
+          grant_access_token_audience: response.requested_access_token_audience,
 
-        // This tells hydra to remember this consent request and allow the same client to request the same
-        // scopes from the same user, without showing the UI, in the future.
-        remember: Boolean(req.body.remember),
+          // This tells hydra to remember this consent request and allow the same client to request the same
+          // scopes from the same user, without showing the UI, in the future.
+          remember: Boolean(req.body.remember),
 
-        // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
-        remember_for: 3600,
-      }) // end of acceptConsentRequest
-        .then(function (response) {
-          // All we need to do now is to redirect the user back to hydra!
-          res.redirect(response.redirect_to);
-        })
-    }) // end then() -- getConsentRequest response
-    // This will handle any error that happens when making HTTP calls to hydra
-    .catch(function (error) {
-      next(error);
-    });
+          // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
+          remember_for: 3600,
+        }) // end of acceptConsentRequest
+          .then(function (response) {
+            // All we need to do now is to redirect the user back to hydra!
+            res.redirect(response.redirect_to);
+          })
+      }) // end then() -- getConsentRequest response
+        // This will handle any error that happens when making HTTP calls to hydra
+        .catch(function (error) {
+          next(error);
+        });
+
+
+    }); // end of query
+
+  // @@async
+  console.log("outer: get entry to vars: ", db_email, db_phone, db_chname);
+
+
 
 }); // end of post
 

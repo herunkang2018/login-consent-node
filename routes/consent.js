@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var url = require('url');
 var hydra = require('../services/hydra')
+var mysql = require('mysql');
+
 
 // Sets up csrf protection
 var csrf = require('csurf');
@@ -40,8 +42,18 @@ router.get('/', csrfProtection, function (req, res, next) {
             // This data will be available in the ID token.
             // @@Runking: add chName using open_paas db
             // id_token: { email: "runking@12306.com" },
+            // remember:?
+            // test
+            var connection = mysql.createConnection({
+              host: 'localserver',
+              user: 'root',
+              password: 'password',
+              database: 'open_paas'
+            });
+
+            connection.connect();
             id_token: { email: "runking" },
-            
+
           }
         }).then(function (response) {
           // All we need to do now is to redirect the user back to hydra!
@@ -110,7 +122,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           // This data will be available in the ID token.
           // id_token: { email: "runking@12306.com", username: "test_it" },
           id_token: { email: "runking", username: "test_it" },
-          
+
         },
 
         // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.

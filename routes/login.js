@@ -61,6 +61,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   // for this!
 
   // test
+  var flag = 0;
   var connection = mysql.createConnection({
     host: 'localserver',
     user: 'root',
@@ -83,7 +84,8 @@ router.post('/', csrfProtection, function (req, res, next) {
     connection.end();
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
-      return;
+      // using flag to temp fixed
+      flag = 1;
     }
 
     console.log('--------------------------SELECT----------------------------');
@@ -98,7 +100,9 @@ router.post('/', csrfProtection, function (req, res, next) {
 
         error: 'The username / password combination is not correct'
       });
-      return;
+
+      flag = 1;
+
     } else {
       console.log("user already have");
       // continue
@@ -106,7 +110,10 @@ router.post('/', csrfProtection, function (req, res, next) {
     console.log('------------------------------------------------------------\n\n');
   });
 
-
+  // not go continue the rest request
+  if(flag == 1){
+    return;
+  }
   // auth the user using open_paas db
 
   /*

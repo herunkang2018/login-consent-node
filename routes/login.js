@@ -19,8 +19,6 @@ var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 
 router.get('/', csrfProtection, function (req, res, next) {
-  // test
-  connection.connect();
 
   // Parses the URL query
   var query = url.parse(req.url, true).query;
@@ -66,6 +64,9 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   // Let's check if the user provided valid credentials. Of course, you'd use a database or some third-party service
   // for this!
+
+  // test
+  connection.connect();
 
   // @@add database
   var email = req.body.email;

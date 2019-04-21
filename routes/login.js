@@ -114,6 +114,8 @@ router.post('/', csrfProtection, function (req, res, next) {
   if(flag == 1){
     return;
   }
+
+  console.log("debug...")
   // auth the user using open_paas db
 
   /*

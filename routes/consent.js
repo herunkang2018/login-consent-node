@@ -11,6 +11,8 @@ var csrfProtection = csrf({ cookie: true });
 
 router.get('/', csrfProtection, function (req, res, next) {
 
+  console.log("enter GET consent")
+
   //@@ test db
   var connection = mysql.createConnection({
     host: 'localserver',
@@ -82,6 +84,8 @@ router.get('/', csrfProtection, function (req, res, next) {
 });
 
 router.post('/', csrfProtection, function (req, res, next) {
+  console.log("enter POST consent")
+  
   // The challenge is now a hidden input field, so let's take it from the request body instead
   var challenge = req.body.challenge;
 

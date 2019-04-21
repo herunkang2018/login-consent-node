@@ -14,6 +14,7 @@ var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 
 router.get('/', csrfProtection, function (req, res, next) {
+  console.log("enter GET login")
 
   // Parses the URL query
   var query = url.parse(req.url, true).query;
@@ -54,6 +55,8 @@ router.get('/', csrfProtection, function (req, res, next) {
 });
 
 router.post('/', csrfProtection, function (req, res, next) {
+  console.log("enter POST login")
+
   // The challenge is now a hidden input field, so let's take it from the request body instead
   var challenge = req.body.challenge;
 

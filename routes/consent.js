@@ -156,7 +156,9 @@ router.post('/', csrfProtection, function (req, res, next) {
         }
 
         console.log('------------------------------------------------------------\n\n');
-      });
+      }); // end of query
+
+      console.log("outer: get entry to vars: ", db_email, db_phone, db_chname);
 
       return hydra.acceptConsentRequest(challenge, {
         // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes

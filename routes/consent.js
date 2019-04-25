@@ -3,6 +3,8 @@ var router = express.Router();
 var url = require('url');
 var hydra = require('../services/hydra')
 var mysql = require('mysql');
+// test config
+var config = require("../config")
 
 
 // Sets up csrf protection
@@ -190,7 +192,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: 3600,
+          remember_for: config.consent_remember,
         }) // end of acceptConsentRequest
           .then(function (response) {
             // All we need to do now is to redirect the user back to hydra!

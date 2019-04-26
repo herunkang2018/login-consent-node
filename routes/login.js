@@ -101,7 +101,8 @@ router.post('/', csrfProtection, function (req, res, next) {
 
         challenge: challenge,
 
-        error: 'The username / password combination is not correct'
+        // error: 'The username / password combination is not correct'
+        error: '??????????????'
       });
 
       return;

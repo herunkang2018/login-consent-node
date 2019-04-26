@@ -10,7 +10,7 @@ html(lang='en')
     .page-content
       .login-from
         .logo-title
-          img(src='/statics/img/logo/bk_login.png', height='32', width='311', alt='')
+          img(src='/statics/img/logo/bk_login.png', height='32', width='311', style="top:150px", alt='')
         .from-detail
           form#login-form(action='/login', method='post', onsubmit='return refresh_token()')
             input(type="hidden",name="_csrf",value=csrfToken)

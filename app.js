@@ -12,7 +12,8 @@ var consent = require('./routes/consent');
 var app = express();
 
 // use static files
-app.use('/statics', express.static('statics'));
+console.log(__dirname)
+app.use('/statics', express.static(__dirname + '/public'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

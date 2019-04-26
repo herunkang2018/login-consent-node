@@ -58,5 +58,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
+// use static files
+app.use('/statics', express.static('statics'));
 
 module.exports = app;

@@ -6,34 +6,55 @@ html(lang='en')
     link(href='/statics/css/bk.css', rel='stylesheet', type='text/css')
     link(href='/statics/assets/bk-icon-2.0/iconfont.css', rel='stylesheet', type='text/css')
     link(href='/statics/css/login.css', rel='stylesheet', type='text/css')
-    title 登录|蓝鲸智云统一登录平台
+    title 授权|蓝鲸智云统一登录平台
     .page-content
       .login-from
         .logo-title
           img(src='/statics/img/logo/bk_login.png', height='32', width='311', alt='')
         .from-detail
-          form#login-form(action='/login', method='post', onsubmit='return refresh_token()')
+          form#login-form(action='', method='post', onsubmit='return refresh_token()')
             input(type="hidden",name="_csrf",value=csrfToken)
             input(type="hidden",name="challenge",value=challenge)
 
-            .is-danger-tip
-              if error
-                p
-                  i.bk-icon.icon-exclamation-circle-shape
-                  span #{error}
+            p.
+                Hi #{user}, application <strong>#{client.client_name || client.client_id}</strong> wants access resources on your behalf and to:
 
-            .form-login
-              .user.group-control
-                i.bk-icon.icon-user
-                input#user(type='text', name='username', placeholder="请输入用户名")
-              .pwd.group-control
-                i.bk-icon.icon-password
-                input#password.password(type='password', name='password', value='', placeholder="请输入用户密码")
-              div
+            each scope in requested_scope
+                input(type="checkbox",id=scope,value=scope,name="grant_scope")
+                label(for=scope) #{scope}
+                br
+
+            //- .form-login
+            //-   .user.group-control
+            //-     i.bk-icon.icon-user
+            //-     input#user(type='text', name='username', placeholder="请输入用户名")
+            //-   .pwd.group-control
+            //-     i.bk-icon.icon-password
+            //-     input#password.password(type='password', name='password', value='', placeholder="请输入用户密码")
+            //-   div
+            //-     input(type="checkbox",id="remember",name="remember",value="1")
+            //-     label(for="remember") 30天免登陆
+            //-     .btn-content.clearfix
+            //-       button.login-btn 登录
+
+            p.
+                Do you want to be asked next time when this application wants to access your data? The application will
+                not be able to ask for more permissions without your consent.
+            ul
+                if client.policy_uri
+                    li
+                        a(href=client.policy_uri) Policy
+                if client.tos_uri
+                    li
+                        a(href=client.tos_uri) Terms of Service
+            p
                 input(type="checkbox",id="remember",name="remember",value="1")
-                label(for="remember") 30天内免登陆
+                label(for="remember") 30天内免授权
+            p
                 .btn-content.clearfix
-                  button.login-btn 登录
+                  button.login-btn 授权
+                .btn-content.clearfix
+                  button.login-btn 取消
                 
       footer.footer
         p

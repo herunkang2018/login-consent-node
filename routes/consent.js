@@ -92,6 +92,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   var challenge = req.body.challenge;
 
   // Let's see if the user decided to accept or reject the consent request..
+  console.log(req.body.submit)
   if (req.body.submit === 'Deny access') {
     // Looks like the consent request was denied by the user
     return hydra.rejectConsentRequest(challenge, {

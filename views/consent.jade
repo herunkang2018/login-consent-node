@@ -7,6 +7,9 @@ html(lang='en')
     link(href='/statics/assets/bk-icon-2.0/iconfont.css', rel='stylesheet', type='text/css')
     link(href='/statics/css/login.css', rel='stylesheet', type='text/css')
     link(href='http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css', rel='stylesheet')
+    script(src='http://libs.baidu.com/jquery/2.0.0/jquery.min.js')
+    script(src='http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js')
+
 
     title 授权|蓝鲸智云统一登录平台
     .page-content
@@ -23,7 +26,7 @@ html(lang='en')
             .btn-group(data-toggle='buttons')
               each scope in requested_scope
                 label.btn.btn-primary #{scope}
-                  input(type="checkbox",id=scope,value=scope,name="grant_scope") ceshi
+                  input(type="checkbox",id=scope,value=scope,name="grant_scope")
                 //- input(type="checkbox",id=scope,value=scope,name="grant_scope")
                 //- label(for=scope).btn.btn-primary #{scope}
 

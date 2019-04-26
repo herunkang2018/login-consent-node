@@ -17,11 +17,11 @@ html(lang='en')
             input(type="hidden",name="challenge",value=challenge)
 
             p.
-                您好： #{user}, 第三方应用 <strong>#{client.client_name || client.client_id}</strong> 希望得到您对如下数据权限的授权:
+                您好: #{user}, 第三方应用 <strong>#{client.client_name || client.client_id}</strong> 希望得到您对如下数据权限的授权:
 
             each scope in requested_scope
                 input(type="checkbox",id=scope,value=scope,name="grant_scope")
-                label(for=scope, class="btn btn-primary") #{scope}
+                label(for=scope).consent-btn #{scope}
                 br
 
             //- .form-login
@@ -52,7 +52,6 @@ html(lang='en')
             div    
                 .btn-content.clearfix
                   button(type="submit" name='submit', value='Allow access').login-btn 授权
-                .btn-content.clearfix
                   button(type="submit" name='submit', value='Deny access').login-btn 取消
                 
       footer.footer

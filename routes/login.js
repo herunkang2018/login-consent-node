@@ -76,7 +76,9 @@ router.post('/', csrfProtection, function (req, res, next) {
   connection.connect();
 
   // @@add database
-  var email = req.body.email;
+  // var email = req.body.email;
+  var username = req.body.username;
+  var email = username;
   var password = req.body.password;
   // var sql = "select password from bkaccount_bkuser where username='admin'"
   // var sql = "select password  from bkaccount_bkuser where username='sss'"

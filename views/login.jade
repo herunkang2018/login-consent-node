@@ -29,8 +29,11 @@ html(lang='en')
                 i.bk-icon.icon-password
                 input#password.password(type='password', name='password', value='', placeholder="{% trans '请输入用户密码' %}")
               div
-              .btn-content.clearfix
-                button.login-btn {% trans '登录' %}
+                input(type="checkbox",id="remember",name="remember",value="1")
+                label(for="remember") 30天免登陆
+                .btn-content.clearfix
+                  button.login-btn {% trans '登录' %}
+                
       footer.footer
         p
           a#contact_us.link {% trans 'QQ咨询' %}(800802001)

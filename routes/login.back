@@ -1,4 +1,4 @@
-﻿var express = require('express');
+var express = require('express');
 var router = express.Router();
 var url = require('url');
 var hydra = require('../services/hydra')
@@ -83,7 +83,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   var sql = "select password from bkaccount_bkuser where username='" + email + "'"
   console.log("++sql: ", sql)
 
-  //æŸ¥
+  //查
   connection.query(sql, function (err, result) {
     connection.end();
     if (err) {
@@ -102,7 +102,7 @@ router.post('/', csrfProtection, function (req, res, next) {
         challenge: challenge,
 
         // error: 'The username / password combination is not correct'
-        error: '账户或者密码错误，请重新输入'
+        error: '??????????????'
       });
 
       return;

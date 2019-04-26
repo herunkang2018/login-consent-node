@@ -11,6 +11,8 @@ var config = require("../config")
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 
+
+// GET
 router.get('/', csrfProtection, function (req, res, next) {
 
   console.log("enter GET consent")
@@ -34,92 +36,7 @@ router.get('/', csrfProtection, function (req, res, next) {
   hydra.getConsentRequest(challenge)
     // This will be called if the HTTP request was successful
     .then(function (response) {
-      // If a user has granted this application the requested scope, hydra will tell us to not show the UI.
-      if (response.skip) {
-        // You can apply logic here, for example grant another scope, or do whatever...
-        // ...
 
-        // Now it's time to grant the consent request. You could also deny the request if something went terribly wrong
-        return hydra.acceptConsentRequest(challenge, {
-          // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
-          // are requested accidentally.
-          grant_scope: response.requested_scope,
-
-          // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.
-          grant_access_token_audience: response.requested_access_token_audience,
-
-          // The session allows us to set session data for id and access tokens
-          session: {
-            // This data will be available when introspecting the token. Try to avoid sensitive information here,
-            // unless you limit who can introspect tokens.
-            // access_token: { foo: 'bar' },
-
-            // This data will be available in the ID token.
-            // @@Runking: add chName using open_paas db
-            // id_token: { email: "runking@12306.com" },
-            // test
-            // debug
-            id_token: { email: "runking", username: "admin"},
-
-          }
-        }).then(function (response) {
-          // All we need to do now is to redirect the user back to hydra!
-          res.redirect(response.redirect_to);
-        });
-      }
-
-      // If consent can't be skipped we MUST show the consent UI.
-      res.render('consent', {
-        csrfToken: req.csrfToken(),
-        challenge: challenge,
-        // We have a bunch of data available from the response, check out the API docs to find what these values mean
-        // and what additional data you have available.
-        requested_scope: response.requested_scope,
-        user: response.subject,
-        client: response.client,
-      });
-    })
-    // This will handle any error that happens when making HTTP calls to hydra
-    .catch(function (error) {
-      next(error);
-    });
-});
-
-router.post('/', csrfProtection, function (req, res, next) {
-  console.log("enter POST consent")
-  
-  // The challenge is now a hidden input field, so let's take it from the request body instead
-  var challenge = req.body.challenge;
-
-  // Let's see if the user decided to accept or reject the consent request..
-  console.log("req.body.submit: ", req.body.submit)
-  if (req.body.submit === 'Deny access') {
-    // Looks like the consent request was denied by the user
-    return hydra.rejectConsentRequest(challenge, {
-      error: 'access_denied',
-      error_description: 'The resource owner denied the request'
-    })
-      .then(function (response) {
-        // All we need to do now is to redirect the browser back to hydra!
-        res.redirect(response.redirect_to);
-      })
-      // This will handle any error that happens when making HTTP calls to hydra
-      .catch(function (error) {
-        next(error);
-      });
-  }
-
-  var grant_scope = req.body.grant_scope
-  if (!Array.isArray(grant_scope)) {
-    grant_scope = [grant_scope]
-  }
-
-  // Seems like the user authenticated! Let's tell hydra...
-  hydra.getConsentRequest(challenge)
-    // This will be called if the HTTP request was successful
-    .then(function (response) {
-      // @@add some logic
-      // using mysql db
       //@@ test db
       var connection = mysql.createConnection({
         host: 'localserver',
@@ -163,57 +80,189 @@ router.post('/', csrfProtection, function (req, res, next) {
 
 
 
-        return hydra.acceptConsentRequest(challenge, {
-          // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
-          // are requested accidentally.
-          grant_scope: grant_scope,
+        // If a user has granted this application the requested scope, hydra will tell us to not show the UI.
+        if (response.skip) {
+          // You can apply logic here, for example grant another scope, or do whatever...
+          // ...
 
-          // The session allows us to set session data for id and access tokens
-          session: {
-            // This data will be available when introspecting the token. Try to avoid sensitive information here,
-            // unless you limit who can introspect tokens.
-            // access_token: { foo: 'bar' },
+          // Now it's time to grant the consent request. You could also deny the request if something went terribly wrong
+          return hydra.acceptConsentRequest(challenge, {
+            // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
+            // are requested accidentally.
+            grant_scope: response.requested_scope,
 
-            // This data will be available in the ID token.
-            // id_token: { email: "runking@12306.com", username: "test_it" },
+            // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.
+            grant_access_token_audience: response.requested_access_token_audience,
 
-            // id_token: { email: "runking", username: "test_it" },
-            // debug
-            id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
-            // id_token: { email: "runking", username: "admin"},
-            
+            // The session allows us to set session data for id and access tokens
+            session: {
+              // This data will be available when introspecting the token. Try to avoid sensitive information here,
+              // unless you limit who can introspect tokens.
+              // access_token: { foo: 'bar' },
 
-          },
+              // This data will be available in the ID token.
+              // @@Runking: add chName using open_paas db
+              // id_token: { email: "runking@12306.com" },
+              // test
+              // debug
+              id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },              
+              // id_token: { email: "runking", username: "admin" },
 
-          // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.
-          grant_access_token_audience: response.requested_access_token_audience,
-
-          // This tells hydra to remember this consent request and allow the same client to request the same
-          // scopes from the same user, without showing the UI, in the future.
-          remember: Boolean(req.body.remember),
-
-          // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.consent_remember,
-        }) // end of acceptConsentRequest
-          .then(function (response) {
+            }
+          }).then(function (response) {
             // All we need to do now is to redirect the user back to hydra!
-            console.log("acceptConsentRequest response.redirect_to: ", response.redirect_to);
             res.redirect(response.redirect_to);
-          })
+          });
+        }
 
-      }) // end query
-      
-      // end then() -- [getConsentRequest response]
+        // If consent can't be skipped we MUST show the consent UI.
+        res.render('consent', {
+          csrfToken: req.csrfToken(),
+          challenge: challenge,
+          // We have a bunch of data available from the response, check out the API docs to find what these values mean
+          // and what additional data you have available.
+          requested_scope: response.requested_scope,
+          user: response.subject,
+          client: response.client,
+        });
+      })
+        // This will handle any error that happens when making HTTP calls to hydra
+        .catch(function (error) {
+          next(error);
+        });
+    });
+    
+
+  // POST
+  router.post('/', csrfProtection, function (req, res, next) {
+    console.log("enter POST consent")
+
+    // The challenge is now a hidden input field, so let's take it from the request body instead
+    var challenge = req.body.challenge;
+
+    // Let's see if the user decided to accept or reject the consent request..
+    console.log("req.body.submit: ", req.body.submit)
+    if (req.body.submit === 'Deny access') {
+      // Looks like the consent request was denied by the user
+      return hydra.rejectConsentRequest(challenge, {
+        error: 'access_denied',
+        error_description: 'The resource owner denied the request'
+      })
+        .then(function (response) {
+          // All we need to do now is to redirect the browser back to hydra!
+          res.redirect(response.redirect_to);
+        })
+        // This will handle any error that happens when making HTTP calls to hydra
+        .catch(function (error) {
+          next(error);
+        });
+    }
+
+    var grant_scope = req.body.grant_scope
+    if (!Array.isArray(grant_scope)) {
+      grant_scope = [grant_scope]
+    }
+
+    // Seems like the user authenticated! Let's tell hydra...
+    hydra.getConsentRequest(challenge)
+      // This will be called if the HTTP request was successful
+      .then(function (response) {
+        // @@add some logic
+        // using mysql db
+        //@@ test db
+        var connection = mysql.createConnection({
+          host: 'localserver',
+          user: 'root',
+          password: 'password',
+          database: 'open_paas'
+        });
+
+        connection.connect();
+
+        var sub = response.subject;
+        console.log("find subject: ", sub);
+
+        //@@ query and fill the id_token
+        // first five fields: username+password+chname+phone+email
+        var db_chname = '';
+        var db_email = '';
+        var db_phone = '';
+
+        var sql = "select chname,phone,email from bkaccount_bkuser where username='" + sub + "'"
+        connection.query(sql, function (err, result) {
+          connection.end();
+          if (err) {
+            console.log('Unexpected error: [SELECT ERROR] - ', err.message);
+            return;
+          }
+
+          console.log(result.length);
+          if (result.length == 0) {
+            console.log("Unexpected error: ")
+          } else {
+            console.log("[Must] user already have");
+
+            // get the entry
+            db_email = result[0].email;
+            db_phone = result[0].phone;
+            db_chname = result[0].chname;
+
+            console.log("get entry to vars: ", db_email, db_phone, db_chname);
+          }
+
+
+
+          return hydra.acceptConsentRequest(challenge, {
+            // We can grant all scopes that have been requested - hydra already checked for us that no additional scopes
+            // are requested accidentally.
+            grant_scope: grant_scope,
+
+            // The session allows us to set session data for id and access tokens
+            session: {
+              // This data will be available when introspecting the token. Try to avoid sensitive information here,
+              // unless you limit who can introspect tokens.
+              // access_token: { foo: 'bar' },
+
+              // This data will be available in the ID token.
+              // id_token: { email: "runking@12306.com", username: "test_it" },
+
+              // id_token: { email: "runking", username: "test_it" },
+              // debug
+              id_token: { email: db_email, username: response.subject, chname: db_chname, phone: db_phone },
+              // id_token: { email: "runking", username: "admin"},
+
+
+            },
+
+            // ORY Hydra checks if requested audiences are allowed by the client, so we can simply echo this.
+            grant_access_token_audience: response.requested_access_token_audience,
+
+            // This tells hydra to remember this consent request and allow the same client to request the same
+            // scopes from the same user, without showing the UI, in the future.
+            remember: Boolean(req.body.remember),
+
+            // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
+            remember_for: config.consent_remember,
+          }) // end of acceptConsentRequest
+            .then(function (response) {
+              // All we need to do now is to redirect the user back to hydra!
+              console.log("acceptConsentRequest response.redirect_to: ", response.redirect_to);
+              res.redirect(response.redirect_to);
+            })
+
+        }) // end query
+
+        // end then() -- [getConsentRequest response]
         // This will handle any error that happens when making HTTP calls to hydra
 
 
 
-    })        
-    .catch(function (error) {
-      next(error);
-    });; // end then() to error management
+      })
+      .catch(function (error) {
+        next(error);
+      });; // end then() to error management
 
 
-}); // end of post
+  }); // end of post
 
-module.exports = router;
+  module.exports = router;

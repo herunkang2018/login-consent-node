@@ -17,11 +17,11 @@ html(lang='en')
             input(type="hidden",name="challenge",value=challenge)
 
             p.
-                Hi #{user}, application <strong>#{client.client_name || client.client_id}</strong> wants access resources on your behalf and to:
+                您好： #{user}, 第三方应用 <strong>#{client.client_name || client.client_id}</strong> 希望得到您对如下数据权限的授权:
 
             each scope in requested_scope
                 input(type="checkbox",id=scope,value=scope,name="grant_scope")
-                label(for=scope) #{scope}
+                label(for=scope, class="btn btn-primary") #{scope}
                 br
 
             //- .form-login
@@ -38,8 +38,7 @@ html(lang='en')
             //-       button.login-btn 登录
 
             p.
-                Do you want to be asked next time when this application wants to access your data? The application will
-                not be able to ask for more permissions without your consent.
+                您可以选择在一段时间内，不重复对此应用授权：
             ul
                 if client.policy_uri
                     li

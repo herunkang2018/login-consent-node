@@ -23,10 +23,9 @@ html(lang='en')
             .btn-group(data-toggle='buttons')
               each scope in requested_scope
                 label.btn.btn-primary #{scope}
-                  input(type="checkbox",id=scope,value=scope,name="grant_scope")
+                  input(type="checkbox",id=scope,value=scope,name="grant_scope") ceshi
                 //- input(type="checkbox",id=scope,value=scope,name="grant_scope")
                 //- label(for=scope).btn.btn-primary #{scope}
-                br
 
             //- .form-login
             //-   .user.group-control

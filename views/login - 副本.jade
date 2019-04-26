@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    h1 Please log in
+    if error
+        p.
+            #{error}
+    form(action="/login",method="POST")
+        input(type="hidden",name="_csrf",value=csrfToken)
+        input(type="hidden",name="challenge",value=challenge)
+        table(style="")
+            tr
+                td
+                    input(type="email",name="email",placeholder="email@foobar.com")
+            tr
+                td
+                    input(type="password",name="password")
+
+        input(type="checkbox",id="remember",name="remember",value="1")
+        label(for="remember") 30天免登陆
+        br
+        input(type="submit",value="Log in")

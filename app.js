@@ -13,7 +13,7 @@ var app = express();
 
 // use static files
 console.log(__dirname)
-app.use('/statics', express.static(__dirname + '/public'));
+app.use('/statics', express.static(path.join(__dirname, "statics")));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

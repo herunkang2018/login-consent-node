@@ -66,37 +66,6 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   // test
   var flag = 0;
-
-  var db_config = {
-    host: 'localserver',
-    user: 'root',
-    password: 'password',
-    database: 'open_paas'
-  };
-
-  function handleError(err) {
-    if (err) {
-      // 如果是连接断开，自动重新连接
-      if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-        connect();
-      } else {
-        console.error(err.stack || err);
-      }
-    }
-  }
-
-  // 连接数据库
-  function connect() {
-    connection = mysql.createConnection(db_config);
-    connection.connect(handleError);
-    connection.on('error', handleError);
-  }
-
-  var connection;
-  connect();
-  
-  /*
-  //old
   var connection = mysql.createConnection({
     host: 'localserver',
     user: 'root',
@@ -105,8 +74,6 @@ router.post('/', csrfProtection, function (req, res, next) {
   });
 
   connection.connect();
-  //old end
-  */
 
   // @@add database
   // var email = req.body.email;

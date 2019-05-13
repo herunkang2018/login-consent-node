@@ -2,7 +2,7 @@ const config = {
     login_remember: 300,
     consent_remember: 120,    
     server: {
-      port: 1200
+      port: 3000
     }
     // ...
   }

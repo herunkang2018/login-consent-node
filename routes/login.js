@@ -57,6 +57,8 @@ router.get('/', csrfProtection, function (req, res, next) {
 
 router.post('/', csrfProtection, function (req, res, next) {
   console.log("enter POST login")
+  console.log("debug: remember login? ", req.body.remember)
+
 
   // The challenge is now a hidden input field, so let's take it from the request body instead
   var challenge = req.body.challenge;
@@ -94,7 +96,7 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   var connection;
   connect();
-  
+
   /*
   //old
   var connection = mysql.createConnection({
@@ -120,7 +122,9 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   //æŸ¥
   connection.query(sql, function (err, result) {
-    connection.end();
+    // connection.end();
+    connection.destroy();
+    
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       // using flag to temp fixed

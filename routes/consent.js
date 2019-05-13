@@ -82,7 +82,8 @@ router.get('/', csrfProtection, function (req, res, next) {
 
         var sql = "select chname,phone,email from bkaccount_bkuser where username='" + sub + "'"
         connection.query(sql, function (err, result) { // note
-          connection.end();
+          // connection.end();
+          connection.destroy();
           if (err) {
             console.log('Unexpected error: [SELECT ERROR] - ', err.message);
             return;
@@ -238,7 +239,8 @@ router.post('/', csrfProtection, function (req, res, next) {
 
       var sql = "select chname,phone,email from bkaccount_bkuser where username='" + sub + "'"
       connection.query(sql, function (err, result) {
-        connection.end();
+        // connection.end();
+        connection.destroy();
         if (err) {
           console.log('Unexpected error: [SELECT ERROR] - ', err.message);
           return;

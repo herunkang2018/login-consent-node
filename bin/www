@@ -8,6 +8,9 @@ var app = require('../app');
 var debug = require('debug')('hydra-identity-and-consent-provider-node:server');
 var http = require('http');
 
+//test config
+var config = require("../config")
+
 /**
  * Get port from environment and store in Express.
  */

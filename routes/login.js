@@ -122,8 +122,8 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   //æŸ¥
   connection.query(sql, function (err, result) {
-    // connection.end();
-    connection.destroy();
+    connection.end();
+    // connection.destroy();
     
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);

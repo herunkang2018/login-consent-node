@@ -130,7 +130,7 @@ router.get('/', csrfProtection, function (req, res, next) {
             res.redirect(response.redirect_to);
           });
         }) // end query
-      } // end if
+      } // end if skip
 
       // If consent can't be skipped we MUST show the consent UI.
       res.render('consent', {
@@ -151,6 +151,7 @@ router.get('/', csrfProtection, function (req, res, next) {
 
 router.post('/', csrfProtection, function (req, res, next) {
   console.log("enter POST consent")
+  console.log("debug: remember consent? ", req.body.remember)
 
   // The challenge is now a hidden input field, so let's take it from the request body instead
   var challenge = req.body.challenge;
@@ -243,7 +244,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           return;
         }
 
-        console.log(result.length);
+        console.log("debug: result num: ", result.length);
         if (result.length == 0) {
           console.log("Unexpected error: ")
         } else {

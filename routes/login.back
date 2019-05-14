@@ -67,7 +67,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   // test
   var flag = 0;
   var connection = mysql.createConnection({
-    host: 'localserver',
+    host: 'localhost',
     user: 'root',
     password: 'password',
     database: 'open_paas'

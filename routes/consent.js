@@ -17,7 +17,7 @@ router.get('/', csrfProtection, function (req, res, next) {
 
   //@@ test db
   var db_config = {
-    host: 'localserver',
+    host: 'localhost',
     user: 'root',
     password: 'password',
     database: 'open_paas'
@@ -47,7 +47,7 @@ router.get('/', csrfProtection, function (req, res, next) {
   /*
   //old
   var connection = mysql.createConnection({
-    host: 'localserver',
+    host: 'localhost',
     user: 'root',
     password: 'password',
     database: 'open_paas'
@@ -188,7 +188,7 @@ router.post('/', csrfProtection, function (req, res, next) {
       // using mysql db
       //@@ test db
       var db_config = {
-        host: 'localserver',
+        host: 'localhost',
         user: 'root',
         password: 'password',
         database: 'open_paas'
@@ -218,7 +218,7 @@ router.post('/', csrfProtection, function (req, res, next) {
       /*
       // old
       var connection = mysql.createConnection({
-        host: 'localserver',
+        host: 'localhost',
         user: 'root',
         password: 'password',
         database: 'open_paas'

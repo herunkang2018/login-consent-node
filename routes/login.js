@@ -229,7 +229,8 @@ router.post('/', csrfProtection, function (req, res, next) {
             expiresIn: 3600000 //seconds
           });
         console.log("set jwt_token: ", token);
-
+        
+        // set expire time to 1 hour
         res.cookie('jwt_token', token, { maxAge: 60 * 60 * 1000 });
 
         // Seems like the user authenticated! Let's tell hydra...

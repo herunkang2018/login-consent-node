@@ -55,11 +55,12 @@ router.get('/', csrfProtection, function (req, res, next) {
 
       // If authentication can't be skipped we MUST show the login UI.
       //debug:
-      res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoxMjMsImlhdCI6MTU1NzkxMzM5OCwiZXhwIjoxNTU3OTE2OTk4fQ.gHoNUbVdGWmj1bfXpqRWfiElNLseyxjgwgo_AnqyWb0", { maxAge: 60 * 60 * 1000 });
+      res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicnVua2luZyIsImlhdCI6MTU1NzkxNDYxMSwiZXhwIjoxNTU3OTE4MjExfQ.tzJBl_C0OzsnG99qkG-PlRtmuMxqvb0uJTY1TTKM58g", { maxAge: 60 * 60 * 1000 });
 
       res.render('login', {
         csrfToken: req.csrfToken(),
         challenge: challenge,
+        client: response.client.client_id //add to autologin        
       });
     })
     // This will handle any error that happens when making HTTP calls to hydra
@@ -93,8 +94,13 @@ router.post('/', csrfProtection, function (req, res, next) {
     jwt.verify(token, secret, function (err, decoded) {
       if (!err) {
         console.log(decoded.name);
+
+
       } else {
         console.log(err);
+        // return to error page
+        // @@ Last: upgrade UX
+
       }
     });
     // bypass and redirect to hydra

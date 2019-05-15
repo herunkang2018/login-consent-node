@@ -131,11 +131,13 @@ router.post('/', csrfProtection, function (req, res, next) {
         return;
 
       }
+
+      return;
     });
     // bypass and redirect to hydra
 
     // if not verified, show the error page (if show the same page, it will deadlock)
-  }
+  } // end if grafana
 
   // test
   var flag = 0;

@@ -55,7 +55,7 @@ router.get('/', csrfProtection, function (req, res, next) {
 
       // If authentication can't be skipped we MUST show the login UI.
       //debug:
-      res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicnVua2luZyIsImlhdCI6MTU1NzkxNDYxMSwiZXhwIjoxNTU3OTE4MjExfQ.tzJBl_C0OzsnG99qkG-PlRtmuMxqvb0uJTY1TTKM58g", { maxAge: 60 * 60 * 1000 });
+      res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicnVua2luZyIsImlhdCI6MTU1NzkxODM1OCwiZXhwIjoxNTYxNTE4MzU4fQ.1EIeRmKa-m4nlKdB7POEVek9Te8pg044MBuNioZK3tQ", { maxAge: 60 * 60 * 1000 });
 
       res.render('login', {
         csrfToken: req.csrfToken(),
@@ -122,7 +122,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           .catch(function (error) {
             next(error);
           });
-          return;
+        return;
 
       } else {
         console.log(err);
@@ -132,127 +132,128 @@ router.post('/', csrfProtection, function (req, res, next) {
 
       }
 
-      return;
     });
     // bypass and redirect to hydra
 
     // if not verified, show the error page (if show the same page, it will deadlock)
-  } // end if grafana
+  } else { // check grafana
+    // test
+    var flag = 0;
 
-  // test
-  var flag = 0;
+    var db_config = {
+      host: 'localhost',
+      user: 'root',
+      password: 'password',
+      database: 'open_paas'
+    };
 
-  var db_config = {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'open_paas'
-  };
-
-  function handleError(err) {
-    if (err) {
-      // 如果是连接断开，自动重新连接
-      if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-        connect();
-      } else {
-        console.error(err.stack || err);
+    function handleError(err) {
+      if (err) {
+        // 如果是连接断开，自动重新连接
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+          connect();
+        } else {
+          console.error(err.stack || err);
+        }
       }
     }
-  }
 
-  // 连接数据库
-  function connect() {
-    connection = mysql.createConnection(db_config);
-    connection.connect(handleError);
-    connection.on('error', handleError);
-  }
-
-  var connection;
-  connect();
-
-  /*
-  //old
-  var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'open_paas'
-  });
-
-  connection.connect();
-  //old end
-  */
-
-  // @@add database
-  // var email = req.body.email;
-  var username = req.body.username;
-  var email = username;
-  var password = req.body.password;
-  // var sql = "select password from bkaccount_bkuser where username='admin'"
-  // var sql = "select password  from bkaccount_bkuser where username='sss'"
-  var sql = "select password from bkaccount_bkuser where username='" + email + "'"
-  console.log("++sql: ", sql)
-
-  //æŸ¥
-  connection.query(sql, function (err, result) {
-    connection.end();
-    // connection.destroy();
-
-    if (err) {
-      console.log('[SELECT ERROR] - ', err.message);
-      // using flag to temp fixed
-      return;
+    // 连接数据库
+    function connect() {
+      connection = mysql.createConnection(db_config);
+      connection.connect(handleError);
+      connection.on('error', handleError);
     }
 
-    console.log(result.length);
-    if (result.length == 0) {
-      // auth failed
-      console.log("no entry");
-      res.render('login', {
-        csrfToken: req.csrfToken(),
+    var connection;
+    connect();
 
-        challenge: challenge,
+    /*
+    //old
+    var connection = mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: 'password',
+      database: 'open_paas'
+    });
+  
+    connection.connect();
+    //old end
+    */
 
-        // error: 'The username / password combination is not correct'
-        error: '账户或者密码错误，请重新输入'
-      });
+    // @@add database
+    // var email = req.body.email;
+    var username = req.body.username;
+    var email = username;
+    var password = req.body.password;
+    // var sql = "select password from bkaccount_bkuser where username='admin'"
+    // var sql = "select password  from bkaccount_bkuser where username='sss'"
+    var sql = "select password from bkaccount_bkuser where username='" + email + "'"
+    console.log("++sql: ", sql)
 
-      return;
+    //æŸ¥
+    connection.query(sql, function (err, result) {
+      connection.end();
+      // connection.destroy();
 
-    } else {
-      console.log("user already exist");
-      // continue
+      if (err) {
+        console.log('[SELECT ERROR] - ', err.message);
+        // using flag to temp fixed
+        return;
+      }
 
-      // Seems like the user authenticated! Let's tell hydra...
-      hydra.acceptLoginRequest(challenge, {
-        // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
-        // @@using username
-        // subject: 'foo@bar.com',
-        subject: email,
+      console.log(result.length);
+      if (result.length == 0) {
+        // auth failed
+        console.log("no entry");
+        res.render('login', {
+          csrfToken: req.csrfToken(),
 
-        // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
-        // set the "skip" parameter in the other route to true on subsequent requests!
-        remember: Boolean(req.body.remember),
+          challenge: challenge,
 
-        // When the session expires, in seconds. Set this to 0 so it will never expire.
-        remember_for: config.login_remember,
-
-        // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
-        // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
-        // acr: '0',
-      })
-        .then(function (response) {
-          // All we need to do now is to redirect the user back to hydra!
-          console.log("acceptLoginRequest response.redirect_to: ", response.redirect_to);
-          res.redirect(response.redirect_to);
-        })
-        // This will handle any error that happens when making HTTP calls to hydra
-        .catch(function (error) {
-          next(error);
+          // error: 'The username / password combination is not correct'
+          error: '账户或者密码错误，请重新输入'
         });
 
-    } //else
-  }); // end of query
+        return;
+
+      } else {
+        console.log("user already exist");
+        // continue
+
+        // Seems like the user authenticated! Let's tell hydra...
+        hydra.acceptLoginRequest(challenge, {
+          // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
+          // @@using username
+          // subject: 'foo@bar.com',
+          subject: email,
+
+          // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
+          // set the "skip" parameter in the other route to true on subsequent requests!
+          remember: Boolean(req.body.remember),
+
+          // When the session expires, in seconds. Set this to 0 so it will never expire.
+          remember_for: config.login_remember,
+
+          // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
+          // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
+          // acr: '0',
+        })
+          .then(function (response) {
+            // All we need to do now is to redirect the user back to hydra!
+            console.log("acceptLoginRequest response.redirect_to: ", response.redirect_to);
+            res.redirect(response.redirect_to);
+          })
+          // This will handle any error that happens when making HTTP calls to hydra
+          .catch(function (error) {
+            next(error);
+          });
+
+      } //else
+    }); // end of query
+  }
+
+
 
 
   /*

@@ -122,11 +122,13 @@ router.post('/', csrfProtection, function (req, res, next) {
           .catch(function (error) {
             next(error);
           });
+          return;
 
       } else {
         console.log(err);
         // return to error page
         // @@ Last: upgrade UX
+        return;
 
       }
     });

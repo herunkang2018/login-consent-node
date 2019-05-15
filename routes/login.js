@@ -89,6 +89,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   if (req.body.grafana == 0) {
     console.log("+++enter token verify for grafana: ");
     // verify the jwt_token
+    var token = req.cookies['jwt_token'];
     jwt.verify(token, secret, function (err, decoded) {
       if (!err) {
         console.log(decoded.name);

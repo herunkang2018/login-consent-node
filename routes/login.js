@@ -49,6 +49,10 @@ router.get('/', csrfProtection, function (req, res, next) {
         });
       }
 
+      // if no skip
+      // debug: show more about the client
+      console.log("response: ", response);
+
       // If authentication can't be skipped we MUST show the login UI.
       //debug:
       res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoxMjMsImlhdCI6MTU1NzkxMzM5OCwiZXhwIjoxNTU3OTE2OTk4fQ.gHoNUbVdGWmj1bfXpqRWfiElNLseyxjgwgo_AnqyWb0", { maxAge: 60 * 60 * 1000 });
@@ -87,7 +91,7 @@ router.post('/', csrfProtection, function (req, res, next) {
     // verify the jwt_token
     jwt.verify(token, secret, function (err, decoded) {
       if (!err) {
-        console.log(decoded.name);  //会输出123，如果过了60秒，则有错误。
+        console.log(decoded.name);
       } else {
         console.log(err);
       }

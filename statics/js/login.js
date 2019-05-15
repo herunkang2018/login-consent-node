@@ -1,3 +1,5 @@
+import { getCiphers } from "tls";
+
 /**
 * Tencent is pleased to support the open source community by making 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
 * Copyright (C) 2017-2018 THL A29 Limited, a Tencent company. All rights reserved.
@@ -7,7 +9,22 @@
 */
 // check the client to determain whether to autologin for grafana
 function check() {
-    console.log($('input[name="client"]').val());
+    var grafana_flag = $('input[name="client"]').val();
+    console.log(grafana_flag);
+    if(grafana_flag == 'test-client-grafana') {
+        // check the jwt_token
+        var jwt_token = getCookie('jwt_token');
+        console.log("jwt_token");
+        if(jwt_token) {
+            // simple verify the name
+            var name = JSON.parse(atob(jwt_token)).name;
+            console.log("name: ", name);
+            
+            // finish checking, change the hidden grafana value
+            $('input[name="grafana"]').val(1)
+        }
+    }
+    
 }
 
 function getCookie(name) {

@@ -226,12 +226,12 @@ router.post('/', csrfProtection, function (req, res, next) {
         const token = jwt.sign({
           name: email
         }, secret, {
-            expiresIn: 3600000 //seconds
+            expiresIn: 3600 * 24 * 30 //seconds
           });
         console.log("set jwt_token: ", token);
         
-        // set expire time to 1 hour
-        res.cookie('jwt_token', token, { maxAge: 60 * 60 * 1000 });
+        // set expire time to 1 hour // change to 1 month
+        res.cookie('jwt_token', token, { maxAge: 30 * 24 * 60 * 60 * 1000 });
 
         // Seems like the user authenticated! Let's tell hydra...
         hydra.acceptLoginRequest(challenge, {

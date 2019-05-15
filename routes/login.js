@@ -14,6 +14,7 @@ var config = require("../config")
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 
+// get
 router.get('/', csrfProtection, function (req, res, next) {
   console.log("enter GET login")
 
@@ -55,6 +56,7 @@ router.get('/', csrfProtection, function (req, res, next) {
     });
 });
 
+// post
 router.post('/', csrfProtection, function (req, res, next) {
   console.log("enter POST login")
   console.log("debug: remember login? ", req.body.remember)
@@ -65,6 +67,18 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   // Let's check if the user provided valid credentials. Of course, you'd use a database or some third-party service
   // for this!
+
+  //debug cookie
+  console.log("req.cookies: ", req.cookies);
+
+  //hiden grafana login
+  if(req.body.grafana == 1) {
+    // verify the jwt_token
+    
+    // bypass and redirect to hydra
+
+    // if not verified, show the error page (if show the same page, it will deadlock)
+  }
 
   // test
   var flag = 0;

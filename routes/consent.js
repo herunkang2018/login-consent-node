@@ -123,6 +123,7 @@ router.get('/', csrfProtection, function (req, res, next) {
               // id_token: { email: "runking@12306.com" },
               // test
               // debug
+              // @@ need modify
               id_token: { email: "runking", username: "admin" },
 
             }

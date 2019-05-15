@@ -7,26 +7,6 @@ import { getCiphers } from "tls";
 * http://opensource.org/licenses/MIT
 * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 */
-// check the client to determain whether to autologin for grafana
-function check() {
-    var grafana_flag = $('input[name="client"]').val();
-    console.log(grafana_flag);
-    if(grafana_flag == 'test-client-grafana') {
-        // check the jwt_token
-        var jwt_token = getCookie('jwt_token');
-        console.log("jwt_token");
-        if(jwt_token) {
-            // simple verify the name
-            var name = JSON.parse(atob(jwt_token)).name;
-            console.log("name: ", name);
-            
-            // finish checking, change the hidden grafana value
-            $('input[name="grafana"]').val(1)
-        }
-    }
-    
-}
-
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -42,6 +22,27 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// check the client to determain whether to autologin for grafana
+function check() {
+    var grafana_flag = $('input[name="client"]').val();
+    console.log(grafana_flag);
+    if(grafana_flag == 'test-client-grafana') {
+        // check the jwt_token
+        var jwt_token = getCookie('jwt_token');
+        console.log("jwt_token: ", jwt_token);
+        if(jwt_token) {
+            // simple verify the name
+            var name = JSON.parse(atob(jwt_token)).name;
+            console.log("name: ", name);
+            
+            // finish checking, change the hidden grafana value
+            $('input[name="grafana"]').val(1)
+        }
+    }
+    
+}
+
 function refresh_token(){
     var csrftoken = getCookie('bklogin_csrftoken');
     $('input[name="csrfmiddlewaretoken"]').val(csrftoken);

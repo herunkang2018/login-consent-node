@@ -12,7 +12,6 @@ const jwt = require('jsonwebtoken');
 //your-256-bit-secret
 const secret = '125F85F1B2D68B2EDF113731B4D66';
 
-
 //Main logic
 
 // Sets up csrf protection
@@ -55,7 +54,9 @@ router.get('/', csrfProtection, function (req, res, next) {
 
       // If authentication can't be skipped we MUST show the login UI.
       //debug:
+      /*
       res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicnVua2luZyIsImlhdCI6MTU1NzkxODM1OCwiZXhwIjoxNTYxNTE4MzU4fQ.1EIeRmKa-m4nlKdB7POEVek9Te8pg044MBuNioZK3tQ", { maxAge: 60 * 60 * 1000 });
+      */
 
       res.render('login', {
         csrfToken: req.csrfToken(),
@@ -136,7 +137,7 @@ router.post('/', csrfProtection, function (req, res, next) {
     // bypass and redirect to hydra
 
     // if not verified, show the error page (if show the same page, it will deadlock)
-  } else { // check grafana
+  } else { // check grafana: no grafana, just cmdb // set jwt_token 
     // test
     var flag = 0;
 
@@ -219,7 +220,16 @@ router.post('/', csrfProtection, function (req, res, next) {
 
       } else {
         console.log("user already exist");
-        // continue
+        // @@continue
+        console.log("set jwt_token");
+        // jwt generate token
+        const token = jwt.sign({
+          name: email
+        }, secret, {
+            expiresIn: 3600000 //seconds
+          });
+
+        res.cookie('jwt_token', token, { maxAge: 60 * 60 * 1000 });
 
         // Seems like the user authenticated! Let's tell hydra...
         hydra.acceptLoginRequest(challenge, {

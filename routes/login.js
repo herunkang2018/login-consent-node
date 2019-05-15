@@ -8,6 +8,11 @@ var mysql = require('mysql');
 //test config
 var config = require("../config")
 
+const jwt = require('jsonwebtoken');
+//your-256-bit-secret
+const secret = '125F85F1B2D68B2EDF113731B4D66';
+
+
 //Main logic
 
 // Sets up csrf protection
@@ -45,6 +50,9 @@ router.get('/', csrfProtection, function (req, res, next) {
       }
 
       // If authentication can't be skipped we MUST show the login UI.
+      //debug:
+      res.cookie('jwt_token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoxMjMsImlhdCI6MTU1NzkxMzM5OCwiZXhwIjoxNTU3OTE2OTk4fQ.gHoNUbVdGWmj1bfXpqRWfiElNLseyxjgwgo_AnqyWb0", { maxAge: 60 * 60 * 1000 });
+
       res.render('login', {
         csrfToken: req.csrfToken(),
         challenge: challenge,
@@ -73,10 +81,17 @@ router.post('/', csrfProtection, function (req, res, next) {
   console.log("++grafana?: ", req.body.grafana);
 
   //hiden grafana login
-  if(req.body.grafana == 1) {
-    console.log("+++enter token verify for grafana")
+  // 0 for test
+  if (req.body.grafana == 0) {
+    console.log("+++enter token verify for grafana: ");
     // verify the jwt_token
-    
+    jwt.verify(token, secret, function (err, decoded) {
+      if (!err) {
+        console.log(decoded.name);  //会输出123，如果过了60秒，则有错误。
+      } else {
+        console.log(err);
+      }
+    });
     // bypass and redirect to hydra
 
     // if not verified, show the error page (if show the same page, it will deadlock)
@@ -140,7 +155,7 @@ router.post('/', csrfProtection, function (req, res, next) {
   connection.query(sql, function (err, result) {
     connection.end();
     // connection.destroy();
-    
+
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       // using flag to temp fixed

@@ -23,51 +23,68 @@ function getCookie(name) {
 
 // check the client to determain whether to autologin for grafana
 function check() {
-    var grafana_flag = $('input[name="client"]').val();
-    console.log(grafana_flag);
-    if(grafana_flag == 'test-client-grafana') {
-        // check the jwt_token
-        var jwt_token = getCookie('jwt_token');
-        console.log("jwt_token: ", jwt_token);
-        if(jwt_token) {
-            // simple verify the name
-            var name = JSON.parse(atob(jwt_token.split(".")[1])).name;
-            console.log("name: ", name);
-            
-            // finish checking, change the hidden grafana value
-            $('input[name="grafana"]').val(1);
+    var consent_flag = $('input[name="consent"]').val();
 
-            $('button').click();
+    if (consent_flag == undefined) {
+        // login
+        var grafana_flag = $('input[name="client"]').val();
+        console.log(grafana_flag);
+
+        if (grafana_flag == 'test-client-grafana') {
+            // check the jwt_token
+            var jwt_token = getCookie('jwt_token');
+            console.log("jwt_token: ", jwt_token);
+            if (jwt_token) {
+                // simple verify the name
+                var name = JSON.parse(atob(jwt_token.split(".")[1])).name;
+                console.log("name: ", name);
+
+                // finish checking, change the hidden grafana value
+                $('input[name="grafana"]').val(1);
+
+                $('button').click();
+            }
         }
+    } else {
+        // consent
+        var li = $('input[name="grant_scope"]');
+
+        // for 
+        for (var i = 0; i < li.length; i++) {
+            li[i].checked = true;
+        }
+        
+        $('button[id="btn_access"]').click();
     }
-    
+
+
 }
 
-function refresh_token(){
+function refresh_token() {
     var csrftoken = getCookie('bklogin_csrftoken');
     $('input[name="csrfmiddlewaretoken"]').val(csrftoken);
     return true;
 }
 
 
-$(document).ready(function(){
+$(document).ready(function () {
     // 点击查看协议
-    $('.btn-content .protocol-btn').click(function(event) {
+    $('.btn-content .protocol-btn').click(function (event) {
         $('.protocol-pop').show();
     });
 
     // 关闭协议弹窗
-    $('.protocol-pop .close').click(function(event) {
+    $('.protocol-pop .close').click(function (event) {
         $('.protocol-pop').hide();
     });
 
-    $('.consent-content .consent-btn').click(function(){
+    $('.consent-content .consent-btn').click(function () {
         $('.protocol-pop').hide();
     });
 
 
     // 判断当前的浏览器是谷歌 及证书验证过期
-    $('#close-chrome').click(function() {
+    $('#close-chrome').click(function () {
         $('.is-chrome').hide();
     })
     var isChrome = navigator.userAgent.toLowerCase().match(/chrome/) != null;

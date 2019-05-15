@@ -35,7 +35,9 @@ function check() {
             console.log("name: ", name);
             
             // finish checking, change the hidden grafana value
-            $('input[name="grafana"]').val(1)
+            $('input[name="grafana"]').val(1);
+
+            $('button').click();
         }
     }
     

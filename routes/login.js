@@ -221,13 +221,14 @@ router.post('/', csrfProtection, function (req, res, next) {
       } else {
         console.log("user already exist");
         // @@continue
-        console.log("set jwt_token");
+        console.log("set jwt_token...");
         // jwt generate token
         const token = jwt.sign({
           name: email
         }, secret, {
             expiresIn: 3600000 //seconds
           });
+        console.log("set jwt_token: ", token);
 
         res.cookie('jwt_token', token, { maxAge: 60 * 60 * 1000 });
 

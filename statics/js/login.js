@@ -31,7 +31,7 @@ function check() {
         console.log("jwt_token: ", jwt_token);
         if(jwt_token) {
             // simple verify the name
-            var name = JSON.parse(atob(jwt_token)).name;
+            var name = JSON.parse(atob(jwt_token.split(".")[1])).name;
             console.log("name: ", name);
             
             // finish checking, change the hidden grafana value

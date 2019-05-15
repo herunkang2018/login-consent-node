@@ -70,9 +70,11 @@ router.post('/', csrfProtection, function (req, res, next) {
 
   //debug cookie
   console.log("req.cookies: ", req.cookies);
+  console.log("++grafana?: ", req.body.grafana);
 
   //hiden grafana login
   if(req.body.grafana == 1) {
+    console.log("+++enter token verify for grafana")
     // verify the jwt_token
     
     // bypass and redirect to hydra

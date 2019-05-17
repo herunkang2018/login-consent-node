@@ -10,7 +10,7 @@
   "pkg": {
     "scripts": [],
     "assets": [],
-    "targets": ["node8.10.0-linux-x64"]
+    "targets": ["node8-linux-x64"]
   },
   "dependencies": {
     "body-parser": "~1.15.1",

@@ -9,7 +9,7 @@
   "bin": "./bin/www",
   "pkg": {
     "scripts": [],
-    "assets": [],
+    "assets": ["public/**/*"],
     "targets": ["node8-linux-x64"]
   },
   "dependencies": {

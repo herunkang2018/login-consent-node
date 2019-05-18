@@ -286,7 +286,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.remember.consent_remember,
+          remember_for: parseInt(config.remember.consent_remember),
         }) // end of acceptConsentRequest
           .then(function (response) {
             // All we need to do now is to redirect the user back to hydra!

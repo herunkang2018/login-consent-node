@@ -114,7 +114,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When the session expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.remember.login_remember,
+          remember_for: parseInt(config.remember.login_remember),
 
           // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
           // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
@@ -244,7 +244,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When the session expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.remember.login_remember,
+          remember_for: parseInt(config.remember.login_remember),
 
           // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
           // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.

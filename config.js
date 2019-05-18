@@ -1,7 +1,7 @@
 var fs = require('fs')
   , ini = require('ini')
 
-var conf_file = process.env.CONF_FILE
+var conf_file = process.env.NODE_CONF_FILE
 console.log("[INFO] ENV CONF_FILE:", conf_file)
 var config = ini.parse(fs.readFileSync(conf_file, 'utf-8'))
 

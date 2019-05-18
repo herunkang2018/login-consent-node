@@ -1,7 +1,10 @@
 var fetch = require('node-fetch')
 var uj = require('url-join')
+var config = require("../config")
 
-var hydraUrl = process.env.HYDRA_ADMIN_URL
+// @@change env to config file
+// var hydraUrl = process.env.HYDRA_ADMIN_URL
+var hydraUrl = config.server.hydra_admin_url
 var mockTlsTermination = {}
 
 if (process.env.MOCK_TLS_TERMINATION) {

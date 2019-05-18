@@ -5,7 +5,12 @@ var hydra = require('../services/hydra')
 var mysql = require('mysql');
 // test config
 var config = require("../config")
-
+const db_config = {
+  host: config.database.host,
+  user: config.database.user,
+  password: config.database.password,
+  database: config.database.database
+};
 
 // Sets up csrf protection
 var csrf = require('csurf');
@@ -16,12 +21,6 @@ router.get('/', csrfProtection, function (req, res, next) {
   console.log("enter GET consent")
 
   //@@ test db
-  var db_config = {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'open_paas'
-  };
 
   function handleError(err) {
     if (err) {
@@ -188,12 +187,6 @@ router.post('/', csrfProtection, function (req, res, next) {
       // @@add some logic
       // using mysql db
       //@@ test db
-      var db_config = {
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'open_paas'
-      };
 
       function handleError(err) {
         if (err) {
@@ -293,7 +286,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.consent_remember,
+          remember_for: config.remember.consent_remember,
         }) // end of acceptConsentRequest
           .then(function (response) {
             // All we need to do now is to redirect the user back to hydra!

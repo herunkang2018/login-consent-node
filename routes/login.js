@@ -7,6 +7,12 @@ var mysql = require('mysql');
 
 //test config
 var config = require("../config")
+const db_config = {
+  host: config.database.host,
+  user: config.database.user,
+  password: config.database.password,
+  database: config.database.database
+};
 
 const jwt = require('jsonwebtoken');
 //your-256-bit-secret
@@ -108,7 +114,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When the session expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.login_remember,
+          remember_for: config.remember.login_remember,
 
           // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
           // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
@@ -140,13 +146,6 @@ router.post('/', csrfProtection, function (req, res, next) {
   } else { // check grafana: no grafana, just cmdb // set jwt_token 
     // test
     var flag = 0;
-
-    var db_config = {
-      host: 'localhost',
-      user: 'root',
-      password: 'password',
-      database: 'open_paas'
-    };
 
     function handleError(err) {
       if (err) {
@@ -245,7 +244,7 @@ router.post('/', csrfProtection, function (req, res, next) {
           remember: Boolean(req.body.remember),
 
           // When the session expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: config.login_remember,
+          remember_for: config.remember.login_remember,
 
           // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
           // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.

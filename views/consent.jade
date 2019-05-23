@@ -11,7 +11,7 @@ html(lang='en')
     script(src='http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js')
 
 
-    title 授权 | 智能网管系统统一登录平台
+    title 授权 | 清石智能IT管理系统-统一登录平台
     .page-content
       .login-from
         .logo-title
@@ -44,27 +44,15 @@ html(lang='en')
             //-     label(for="remember") 30天免登陆
             //-     .btn-content.clearfix
             //-       button.login-btn 登录
-            br
-            p.
-                您可以选择在一段时间内，不重复对此应用授权：
-            ul
-                if client.policy_uri
-                    li
-                        a(href=client.policy_uri) Policy
-                if client.tos_uri
-                    li
-                        a(href=client.tos_uri) Terms of Service
-            p
-                input(type="checkbox",id="remember",name="remember",value="1")
-                label(for="remember") 30天内免授权
+
             div    
                 .btn-content.clearfix
                   button(type="submit" name='submit', id="btn_access", value='Allow access').btn.btn-primary 授权
                   button(type="submit" name='submit', value='Deny access').btn.btn-primary 取消
                 
       footer.footer
-        p Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved.
-        p 智能网管系统 版权所有
+        p Copyright © 2012-2019 Clean Slate. All Rights Reserved.
+        p 清石智能IT管理系统 版权所有
     // 浏览器验证
     .error-message-content.is-chrome
       span 您的浏览器非Chrome，建议您使用最新版本的Chrome浏览，以保证最好的体验效果

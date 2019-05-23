@@ -1,6 +1,6 @@
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : 'localserver',
   user     : 'root',
   password : 'password',
   database : 'open_paas'
@@ -28,7 +28,7 @@ connection.query(sql,function (err, result) {
           console.log("no entry");
        } else {
          console.log("user already have");
-         console.log(result[0].user)
+         console.log(result[0].password)
        }
        console.log('------------------------------------------------------------\n\n');  
 });

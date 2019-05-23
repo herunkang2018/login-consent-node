@@ -5,6 +5,9 @@ var hydra = require('../services/hydra')
 
 var mysql = require('mysql');
 
+// add password verify lib
+const hashers = require('./hasher.js');
+
 //test config
 var config = require("../config")
 const db_config = {
@@ -220,47 +223,69 @@ router.post('/', csrfProtection, function (req, res, next) {
       } else {
         console.log("user already exist");
         // @@continue
-        console.log("set jwt_token...");
-        // jwt generate token
-        const token = jwt.sign({
-          name: email
-        }, secret, {
-            expiresIn: 3600 * 24 * 30 //seconds
-          });
-        console.log("set jwt_token: ", token);
-        
-        // set expire time to 1 hour // change to 1 month
-        res.cookie('jwt_token', token, { maxAge: 30 * 24 * 60 * 60 * 1000 });
 
-        // Seems like the user authenticated! Let's tell hydra...
-        hydra.acceptLoginRequest(challenge, {
-          // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
-          // @@using username
-          // subject: 'foo@bar.com',
-          subject: email,
+        // now verify password
+        const h = new hashers.PBKDF2PasswordHasher();
+        h.verify(password, result[0].password).then(function (value) {
+          if (value == false) {
+            // return to relogin page
+            // auth failed
+            res.render('login', {
+              csrfToken: req.csrfToken(),
 
-          // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
-          // set the "skip" parameter in the other route to true on subsequent requests!
-          remember: Boolean(req.body.remember),
+              challenge: challenge,
 
-          // When the session expires, in seconds. Set this to 0 so it will never expire.
-          remember_for: parseInt(config.remember.login_remember),
+              // error: 'The username / password combination is not correct'
+              error: '账户或者密码错误，请重新输入'
+            });
 
-          // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
-          // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
-          // acr: '0',
-        })
-          .then(function (response) {
-            // All we need to do now is to redirect the user back to hydra!
-            console.log("acceptLoginRequest response.redirect_to: ", response.redirect_to);
-            res.redirect(response.redirect_to);
-          })
-          // This will handle any error that happens when making HTTP calls to hydra
-          .catch(function (error) {
-            next(error);
-          });
+            return;
+          } else {
+            // checked
+            // TODO:5.23 jwt_token is only set when login to cmdb
+            console.log("set jwt_token...");
+            // jwt generate token
+            const token = jwt.sign({
+              name: email
+            }, secret, {
+                expiresIn: 3600 * 24 * 30 //seconds
+              });
+            console.log("set jwt_token: ", token);
 
-      } //else
+            // set expire time to 1 hour // change to 1 month
+            res.cookie('jwt_token', token, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+
+            // Seems like the user authenticated! Let's tell hydra...
+            hydra.acceptLoginRequest(challenge, {
+              // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
+              // @@using username
+              // subject: 'foo@bar.com',
+              subject: email,
+
+              // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
+              // set the "skip" parameter in the other route to true on subsequent requests!
+              remember: Boolean(req.body.remember),
+
+              // When the session expires, in seconds. Set this to 0 so it will never expire.
+              remember_for: parseInt(config.remember.login_remember),
+
+              // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
+              // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
+              // acr: '0',
+            })
+              .then(function (response) {
+                // All we need to do now is to redirect the user back to hydra!
+                console.log("acceptLoginRequest response.redirect_to: ", response.redirect_to);
+                res.redirect(response.redirect_to);
+              })
+              // This will handle any error that happens when making HTTP calls to hydra
+              .catch(function (error) {
+                next(error);
+              });
+          } // else checked
+        }); // end verify then()
+
+      } //else database has the user entry
     }); // end of query
   }
 

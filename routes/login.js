@@ -6,7 +6,37 @@ var hydra = require('../services/hydra')
 var mysql = require('mysql');
 
 // add password verify lib
-const hashers = require('./hasher.js');
+// const hashers = require('../hasher');
+const crypto = require('crypto');
+
+function PBKDF2PasswordHasher() {
+    this.terations = 20000;
+    this.len = 32;
+
+    this.verify = function (password, hash_password) {
+        const self = this;
+
+        return new Promise(function (resolve, reject) {
+            if (!hash_password) {
+                resolve(false);
+            }
+            const parts = hash_password.split('$');
+
+            if (parts.length !== 4) {
+                resolve(false);
+            }
+
+            const iterations = parseInt(parts[1]);
+            const salt = parts[2];
+            const value = parts[3];
+            crypto.pbkdf2(password, salt, iterations, self.len, 'sha256', function (err, derivedKey) {
+                if (err) { return reject(err); }
+                return resolve(new Buffer(derivedKey, 'binary').toString('base64') === value);
+            });
+        });
+    }
+}
+
 
 //test config
 var config = require("../config")
@@ -225,7 +255,7 @@ router.post('/', csrfProtection, function (req, res, next) {
         // @@continue
 
         // now verify password
-        const h = new hashers.PBKDF2PasswordHasher();
+        const h = new PBKDF2PasswordHasher();
         h.verify(password, result[0].password).then(function (value) {
           if (value == false) {
             // return to relogin page
@@ -322,7 +352,5 @@ router.post('/', csrfProtection, function (req, res, next) {
   //     next(error);
   //   });
 });
-
-
 
 module.exports = router;

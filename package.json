@@ -25,10 +25,6 @@
     "url-join": "^4.0.0",
     "jsonwebtoken": "*",
     "mysql": "2.17.1",
-    "ini": "*",
-    "argon2-ffi": "^1.1.0",
-    "assert": "^1.4.1",
-    "bcryptjs": "^2.3.0",
-    "node-gyp": "^3.7.0"
+    "ini": "*"
   }
 }
